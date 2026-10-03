@@ -5,8 +5,8 @@ LDLIBS  = -lm
 
 # Project files
 TARGET  = mySolver
-SRCS    = mySolver.c horner.c problemType.c solverType.c
-HDRS    = horner.h problemType.h solverType.h
+SRCS    = mySolver.c solverType.c
+HDRS    = solverType.h
 OBJS    = $(SRCS:.c=.o)
 
 # These targets are commands, not files

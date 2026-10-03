@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "problemType.h"
+#include <string.h>
 #include "solverType.h"
 
 void printUsage(void);
@@ -9,7 +8,7 @@ void printUsage(void);
 // ./mysolver [problem type] [solver type] [args] [range start] [range end]
 int main(int argc, char *argv[]) {
 
-	size_t lengthOfCoefficients = argc - 3 - 2; // first three and last two, example shows last two are a range
+	size_t length = argc; // first three and last two, example shows last two are a range
 	int max = 20; //arbitrary max of function. Could go bigger. 
 
 	if (argc < 4) {
@@ -17,7 +16,7 @@ int main(int argc, char *argv[]) {
 		printUsage();
 		return 0;
 	} else if (argc > max) {
-		printf("Too many arguements: Max: %d, Max Coefficients: %zu", max, lengthOfCoefficients);
+		printf("Too many arguements: Max: %d, Max Coefficients: %zu", max, length);
 		return 0;
 	}
 
@@ -25,9 +24,8 @@ int main(int argc, char *argv[]) {
 
 	char *problemType = argv[1];
 	char *solverType = argv[2];
-	double coefficients[lengthOfCoefficients];
-	double newPoly[lengthOfCoefficients];
-	double bounds[2] = {atof(argv[argc - 2]), atof(argv[argc - 1])};
+	double args[length];
+	double bounds[] = {atof(argv[argc - 2]), atof(argv[argc - 1])};
 	
 	if (argc > max) {
 		printf("Too many Arguements to handle");
@@ -35,47 +33,36 @@ int main(int argc, char *argv[]) {
 	}
 
 	for (int i = 3; i < argc - 2; i++){
-		coefficients[i-3] = atof(argv[i]);
+		args[i-3] = atof(argv[i]);
 	}
 	
-	
-	// TODO: I think it may be easiest to turn them all into poly then handle with the solver,
-	if (strcmp("POLY", problemType) == 0){
-		memcpy(newPoly, coefficients, lengthOfCoefficients * sizeof(double));
-	} else if (strcmp("COS", problemType) == 0) {
-		cosToPoly(coefficients);
-	} else if (strcmp("SIN", problemType) == 0) {
-		sinToPoly(coefficients);
-	} else if (strcmp("TAN", problemType) == 0) {
-		tanToPoly(coefficients);
-	} else if (strcmp("EXP", problemType) == 0) {
-		expToPoly(coefficients);
-	} else if (strcmp("LOG", problemType) == 0) {
-		logToPoly(coefficients);
-	} else { 
+	if (strcmp("POLY", problemType) == 0|| strcmp("COS", problemType) == 0
+	|| strcmp("SIN", problemType) == 0 || strcmp("TAN", problemType) == 0 
+	|| strcmp("EXP", problemType) == 0 || strcmp("LOG", problemType) == 0 ) {
 		printf("Error: Not a known Problem Type: \n");
-		printf("<POLY> <COS> <SIN> <TAN> <EXP> <LOG>\n");
+		printUsage();
+		return 0;
 	}
-
 	
-	// TODO: each of these might look something like output = BiSec(length, newPolyArray, range start, range end) output would be the answer after recursive resolution
+	// TODO: each of these might look something like output = BiSec(problemType, length, ArgArr[], range[])
 	// Calls would need to call themselves recursively until a solution is found
-	if (strcmp("BiSec", solverType)){
-		output = BiSec();
-	} else if (strcmp("FalsePos", solverType)){
-		output = FalsePos();
+	// Need to handle the problemType in solverType to get Y values each time
+	if (strcmp("BiSec", solverType) == 0){
+		output = BiSec(problemType, length, args, bounds[0], bounds[1]);
+	} else if (strcmp("FalsePos", solverType) == 0){
+		output = FalsePos(problemType, length, args, bounds[0], bounds[1]);
 	return 0;
-	} else if (strcmp("Newton1", solverType)){
-		output = Newton1();
+	} else if (strcmp("Newton1", solverType) == 0){
+		output = Newton1(problemType, length, args, bounds[0], bounds[1]);
 	return 0;
-	} else if (strcmp("Newton2", solverType)){
-		output = Newton2();
+	} else if (strcmp("Newton2", solverType) == 0){
+		output = Newton2(problemType, length, args, bounds[0], bounds[1]);
 	return 0;
-	} else if (strcmp("Bracket-Newton1", solverType)){
-		output = BracketNewton1();
+	} else if (strcmp("Bracket-Newton1", solverType) == 0){
+		output = BracketNewton1(problemType, length, args, bounds[0], bounds[1]);
 	return 0;
-	} else if (strcmp("Bracket-Newton2", solverType)){
-		output = BracketNewton2();
+	} else if (strcmp("Bracket-Newton2", solverType) == 0){
+		output = BracketNewton2(problemType, length, args, bounds[0], bounds[1]);
 	return 0;
 	} else {
 	printf("Error: Not a known Solver Type: \n");
