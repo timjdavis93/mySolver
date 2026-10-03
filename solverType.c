@@ -11,15 +11,45 @@
 double findY(char *problemType, size_t length, double args[], double x);
 
 // NOTE: Cant use pi this way unless I calculate it for each func
-// static const double pi = acos(-1);
+// static const double pi = acos(-1); // found in math.h examples
 static const double pi = M_PI;
+static const int max_loops = 100;
 
-double BiSec(char *problemType, size_t length, double args[], double boundsA, double boundsB);
+double BiSec(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	double boundsC = (boundsA + boundsB) / 2;
+	double yA = findY(problemType, length, args, boundsA);
+	double yB = findY(problemType, length, args, boundsB);
+	double yC = findY(problemType, length, args, boundsC);
+	
+	if (yA == 0) return boundsA;
+	if (yB == 0) return boundsB;
+	if (yC == 0) return boundsC;
+
+	for (int i = 0; i < max_loops; i++) {	
+		if ( yA * yC < 0 ) {
+			boundsB = boundsC;
+		} else if ( yC * yB < 0 ) {
+			boundsA = boundsC;
+		} else { 
+			// TODO: make sure bounds check f(a)*f(b) < 0 is done before calling any method in mySolver
+			// it may be useful to check for error types in main() so that we can error properly
+			printf("Error: BiSec: No Root: A:%g B:%g", boundsA, boundsB);
+			return 0;
+		}
+		boundsC = (boundsA + boundsB) / 2;
+		yA = findY(problemType, length, args, boundsA);
+		yB = findY(problemType, length, args, boundsB);
+		yC = findY(problemType, length, args, boundsC);
+		if (yC == 0) return boundsC;
+	}
+	return 0; // TODO: figure out how to throw an error for hitting max_loops
+}
 double FalsePos(char *problemType, size_t length, double args[], double boundsA, double boundsB);
 double Newton1(char *problemType, size_t length, double args[], double boundsA, double boundsB);
 double Newton2(char *problemType, size_t length, double args[], double boundsA, double boundsB);
 double BracketNewton1(char *problemType, size_t length, double args[], double boundsA, double boundsB);
 double BracketNewton2(char *problemType, size_t length, double args[], double boundsA, double boundsB);
+
 
 double horner(size_t length, double arr[], double x) {
 
@@ -34,7 +64,7 @@ double horner(size_t length, double arr[], double x) {
 double findY(char *problemType, size_t length, double args[], double x){
 	double y;
 	if (strcmp("POLY", problemType) == 0) {
-		y = horner(length, args, x); // NOTE: [-inf, inf]
+		y = horner(length, args, x); // NOTE: x: [-inf, inf]
 
 	} else if (strcmp("COS", problemType) == 0) {
 		if (0 <= x && x <= pi ) {
@@ -64,7 +94,7 @@ double findY(char *problemType, size_t length, double args[], double x){
 		}
 
 	} else if (strcmp("EXP", problemType) == 0) {
-		y = exp(x); // NOTE: [-inf, inf]
+		y = exp(x); // NOTE: x: [-inf, inf]
 
 	} else if (strcmp("LOG", problemType) == 0) {
 		if ( 0 < x ) {
