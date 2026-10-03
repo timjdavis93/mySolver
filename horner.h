@@ -1,3 +1,4 @@
 #pragma once
+#include <stdio.h>
 
-float horner(float arr[]);
+double horner(size_t length, double arr[], double x);
