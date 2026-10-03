@@ -44,32 +44,26 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	
-	// TODO: each of these might look something like output = BiSec(problemType, length, ArgArr[], range[])
-	// Calls would need to call themselves recursively until a solution is found
-	// Need to handle the problemType in solverType to get Y values each time
 	if (strcmp("BiSec", solverType) == 0){
 		output = BiSec(problemType, length, args, bounds[0], bounds[1]);
 	} else if (strcmp("FalsePos", solverType) == 0){
 		output = FalsePos(problemType, length, args, bounds[0], bounds[1]);
-	return 0;
 	} else if (strcmp("Newton1", solverType) == 0){
 		output = Newton1(problemType, length, args, bounds[0], bounds[1]);
-	return 0;
 	} else if (strcmp("Newton2", solverType) == 0){
 		output = Newton2(problemType, length, args, bounds[0], bounds[1]);
-	return 0;
 	} else if (strcmp("Bracket-Newton1", solverType) == 0){
 		output = BracketNewton1(problemType, length, args, bounds[0], bounds[1]);
-	return 0;
 	} else if (strcmp("Bracket-Newton2", solverType) == 0){
 		output = BracketNewton2(problemType, length, args, bounds[0], bounds[1]);
-	return 0;
 	} else {
 	printf("Error: Not a known Solver Type: \n");
-	printf("<BiSec> <FalsePos> <Newton1> <Newton2> <Bracket-Newton1> <Bracket-Newton2>\n");
+	printUsage();
 	return 0;
 	};
-	printf("Output: %g\n", output);
+	
+// TODO: May also need to calculate the error. 
+	printf("Solver output: %g\n", output);
 	return 0;
 }
 
