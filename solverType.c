@@ -1,6 +1,7 @@
 #include "solverType.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
@@ -16,6 +17,7 @@ static const double pi = M_PI;
 static const int max_loops = 100;
 
 double BiSec(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+
 	double boundsC = (boundsA + boundsB) / 2;
 	double yA = findY(problemType, length, args, boundsA);
 	double yB = findY(problemType, length, args, boundsB);
@@ -31,10 +33,8 @@ double BiSec(char *problemType, size_t length, double args[], double boundsA, do
 		} else if ( yC * yB < 0 ) {
 			boundsA = boundsC;
 		} else { 
-			// TODO: make sure bounds check f(a)*f(b) < 0 is done before calling any method in mySolver
-			// it may be useful to check for error types in main() so that we can error properly
 			printf("Error: BiSec: No Root: A:%g B:%g", boundsA, boundsB);
-			return 0;
+			exit(1);
 		}
 		boundsC = (boundsA + boundsB) / 2;
 		yA = findY(problemType, length, args, boundsA);
@@ -42,7 +42,8 @@ double BiSec(char *problemType, size_t length, double args[], double boundsA, do
 		yC = findY(problemType, length, args, boundsC);
 		if (yC == 0) return boundsC;
 	}
-	return 0; // TODO: figure out how to throw an error for hitting max_loops
+	printf("Error: Hit Max Loops");
+	exit(1);
 }
 double FalsePos(char *problemType, size_t length, double args[], double boundsA, double boundsB);
 double Newton1(char *problemType, size_t length, double args[], double boundsA, double boundsB);

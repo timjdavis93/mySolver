@@ -7,7 +7,7 @@ void printUsage(void);
 
 // ./mysolver [problem type] [solver type] [args] [range start] [range end]
 int main(int argc, char *argv[]) {
-
+	// TODO: Stack / Heap : General rule of thumb, Heap is for memory we can't know the size of at compile time. This would include the arguements list because we don't know how big the polynomial might be. Consider changing some allocations over to the heap. -Boot.dev lessons
 	size_t length = argc; // first three and last two, example shows last two are a range
 	int max = 20; //arbitrary max of function. Could go bigger. 
 
@@ -24,7 +24,12 @@ int main(int argc, char *argv[]) {
 
 	char *problemType = argv[1];
 	char *solverType = argv[2];
-	double args[length];
+	double *args = malloc(sizeof(double) * length);
+	if (args == NULL) {
+		printf("Error: Issue allocating memory for args");
+		return 1;
+	}
+
 	double bounds[] = {atof(argv[argc - 2]), atof(argv[argc - 1])};
 	
 	if (argc > max) {
