@@ -15,6 +15,7 @@ double findY(char *problemType, size_t length, double args[], double x);
 // static const double pi = acos(-1); // found in math.h examples
 static const double pi = M_PI;
 static const int max_loops = 100;
+static const double tolerance = 1e-8;
 
 double BiSec(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
 
@@ -33,23 +34,38 @@ double BiSec(char *problemType, size_t length, double args[], double boundsA, do
 		} else if ( yC * yB < 0 ) {
 			boundsA = boundsC;
 		} else { 
-			printf("Error: BiSec: No Root: A:%g B:%g", boundsA, boundsB);
+			fprintf(stderr, "Error: BiSec: No Root: A:%.17g B:%.17g", boundsA, boundsB);
 			exit(1);
 		}
 		boundsC = (boundsA + boundsB) / 2;
 		yA = findY(problemType, length, args, boundsA);
 		yB = findY(problemType, length, args, boundsB);
 		yC = findY(problemType, length, args, boundsC);
-		if (yC == 0) return boundsC;
+		if (fabs(yC) < tolerance) return boundsC;
 	}
-	printf("Error: Hit Max Loops");
+	fprintf(stderr, "Error: Hit Max Loops");
 	exit(1);
 }
-double FalsePos(char *problemType, size_t length, double args[], double boundsA, double boundsB);
-double Newton1(char *problemType, size_t length, double args[], double boundsA, double boundsB);
-double Newton2(char *problemType, size_t length, double args[], double boundsA, double boundsB);
-double BracketNewton1(char *problemType, size_t length, double args[], double boundsA, double boundsB);
-double BracketNewton2(char *problemType, size_t length, double args[], double boundsA, double boundsB);
+double FalsePos(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	(void)problemType; (void)length; (void)args; (void)boundsA; (void)boundsB;
+	return 1;
+}
+double Newton1(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	(void)problemType; (void)length; (void)args; (void)boundsA; (void)boundsB;
+	return 1;
+}
+double Newton2(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	(void)problemType; (void)length; (void)args; (void)boundsA; (void)boundsB;
+	return 1;
+}
+double BracketNewton1(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	(void)problemType; (void)length; (void)args; (void)boundsA; (void)boundsB;
+	return 1;
+}
+double BracketNewton2(char *problemType, size_t length, double args[], double boundsA, double boundsB) {
+	(void)problemType; (void)length; (void)args; (void)boundsA; (void)boundsB;
+	return 1;
+}
 
 
 double horner(size_t length, double arr[], double x) {
@@ -64,34 +80,35 @@ double horner(size_t length, double arr[], double x) {
 
 double findY(char *problemType, size_t length, double args[], double x){
 	double y;
+	double c = args[0];
 	if (strcmp("POLY", problemType) == 0) {
 		y = horner(length, args, x); // NOTE: x: [-inf, inf]
 
 	} else if (strcmp("COS", problemType) == 0) {
 		if (0 <= x && x <= pi ) {
-			y = cos(x);
+			y = cos(x) - c;
 		} else {
-			printf("X is Out of Bounds ERROR\n");
-			printf("COS: X: %g\n", x);
-			return 0;
+			fprintf(stderr, "X is Out of Bounds ERROR\n");
+			fprintf(stderr, "COS: X: %.17g\n", x);
+			exit(1);
 		}
 
 	} else if (strcmp("SIN", problemType) == 0) {
 		if (-1 * pi / 2 <= x && x <= pi / 2 ) {
-			y = sin(x);
+			y = sin(x) - c;
 		} else {
-			printf("X is Out of Bounds ERROR\n");
-			printf("SIN: X: %g\n", x);
-			return 0;
+			fprintf(stderr, "X is Out of Bounds ERROR\n");
+			fprintf(stderr, "SIN: X: %.17g\n", x);
+			exit(1);
 		}
 
 	} else if (strcmp("TAN", problemType) == 0) {
-		if (-1 * pi / 2 <= x && x <= pi / 2 ) {
-			y = tan(x);
+		if (-1 * pi / 2 < x && x < pi / 2 ) {
+			y = tan(x) - c;
 		} else {
-			printf("X is Out of Bounds ERROR\n");
-			printf("SIN: X: %g\n", x);
-			return 0;
+			fprintf(stderr, "X is Out of Bounds ERROR\n");
+			fprintf(stderr, "SIN: X: %.17g\n", x);
+			exit(1);
 		}
 
 	} else if (strcmp("EXP", problemType) == 0) {
@@ -99,11 +116,11 @@ double findY(char *problemType, size_t length, double args[], double x){
 
 	} else if (strcmp("LOG", problemType) == 0) {
 		if ( 0 < x ) {
-			y = log(x);
+			y = log(x) - c;
 		} else {
-			printf("X is Out of Bounds ERROR\n");
-			printf("Log: X: %g\n", x);
-			return 0;
+			fprintf(stderr, "X is Out of Bounds ERROR\n");
+			fprintf(stderr, "Log: X: %.17g\n", x);
+			exit(1);
 		}
 	}
 

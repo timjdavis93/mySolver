@@ -12,13 +12,13 @@ int main(int argc, char *argv[]) {
 	int max = 20; //arbitrary max of function. Could go bigger. 
 
 	if (argc < 4) {
-		printf("Not enough arguements given\n");
+		fprintf(stderr, "Not enough arguements given\n");
 		printUsage();
 		return 0;
 	} else if (argc > max) {
-		printf("Too many arguements: Max: %d, Max Coefficients: %zu", max, length);
-		return 0;
-	}
+		fprintf(stderr, "Too many arguements: Max: %d\n", max);
+		return 1;
+	} 
 
 	double output;
 
@@ -26,25 +26,20 @@ int main(int argc, char *argv[]) {
 	char *solverType = argv[2];
 	double *args = malloc(sizeof(double) * length);
 	if (args == NULL) {
-		printf("Error: Issue allocating memory for args");
+		fprintf(stderr, "Error: Issue allocating memory for args");
 		return 1;
 	}
 
 	double bounds[] = {atof(argv[argc - 2]), atof(argv[argc - 1])};
-	
-	if (argc > max) {
-		printf("Too many Arguements to handle");
-		return 0;
-	}
 
 	for (int i = 3; i < argc - 2; i++){
 		args[i-3] = atof(argv[i]);
 	}
 	
-	if (strcmp("POLY", problemType) == 0|| strcmp("COS", problemType) == 0
+	if (!(strcmp("POLY", problemType) == 0 || strcmp("COS", problemType) == 0
 	|| strcmp("SIN", problemType) == 0 || strcmp("TAN", problemType) == 0 
-	|| strcmp("EXP", problemType) == 0 || strcmp("LOG", problemType) == 0 ) {
-		printf("Error: Not a known Problem Type: \n");
+	|| strcmp("EXP", problemType) == 0 || strcmp("LOG", problemType) == 0 )) {
+		fprintf(stderr, "Error: Not a known Problem Type: \n");
 		printUsage();
 		return 0;
 	}
@@ -62,17 +57,18 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp("Bracket-Newton2", solverType) == 0){
 		output = BracketNewton2(problemType, length, args, bounds[0], bounds[1]);
 	} else {
-	printf("Error: Not a known Solver Type: \n");
+	fprintf(stderr, "Error: Not a known Solver Type: \n");
 	printUsage();
-	return 0;
+	return 1;
 	};
 	
 // TODO: May also need to calculate the error. 
-	printf("Solver output: %g\n", output);
+	printf("Solver output: %.17g\n", output);
 	return 0;
 }
 
 void printUsage(void) {
+	printf("Error: \n");
 	printf("=====================================================================================\n");
 	printf("<./mySolver> <Problem Type> <Solver Type> <Coefficients> <Range Start> <Range End>\n");
 	printf("=====================================================================================\n");
